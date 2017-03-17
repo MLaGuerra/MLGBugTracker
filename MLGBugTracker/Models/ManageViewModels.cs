@@ -58,6 +58,22 @@ namespace MLGBugTracker.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class ChangeNameViewModel
+    {
+        [DataType(DataType.Text)]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [DataType(DataType.Text)]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [DataType(DataType.Text)]
+        [Display(Name = "Display Name")]
+        public string DisplayName { get; set; }
+    }
+
+
     public class AddPhoneNumberViewModel
     {
         [Required]
