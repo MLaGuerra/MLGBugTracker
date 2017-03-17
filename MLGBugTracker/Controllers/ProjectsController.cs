@@ -15,7 +15,7 @@ namespace MLGBugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Projects
-        //[Authorize(Roles = "Admin,Project Manager,Developer,Submitter")]
+        //[Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
         public ActionResult Index()
         {
             return View(db.Projects.ToList());
@@ -37,7 +37,7 @@ namespace MLGBugTracker.Controllers
         }
 
         // GET: Projects/Create
-        //[Authorize(Roles = "Admin,Project Manager")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Create()
         {
             return View();
@@ -48,7 +48,7 @@ namespace MLGBugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin,Project Manager")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Create([Bind(Include = "Id,Name")] Projects projects)
         {
             if (ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace MLGBugTracker.Controllers
         }
 
         // GET: Projects/Edit/5
-        [Authorize(Roles = "Admin,Project Manager")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +94,7 @@ namespace MLGBugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Project Manager")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Edit(ProjectViewModel projectVM)
         {
             if (projectVM == null)

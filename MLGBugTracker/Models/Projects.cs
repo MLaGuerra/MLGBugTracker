@@ -10,7 +10,7 @@ namespace MLGBugTracker.Models
     {
         public Projects()
         {
-            //this.Tickets = new HashSet<Ticket>();
+            this.Tickets = new HashSet<Ticket>();
             this.Users = new HashSet<ApplicationUser>();
         }
 
@@ -18,7 +18,7 @@ namespace MLGBugTracker.Models
         [Required]
         public string Name { get; set; }
 
-        //public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

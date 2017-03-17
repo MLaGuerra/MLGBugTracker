@@ -35,5 +35,15 @@ namespace MLGBugTracker.Models
         }
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.Projects> Projects { get; set; }
+
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.Ticket> Tickets { get; set; }
+
+        //public System.Data.Entity.DbSet<MLGBugTracker.Models.ApplicationUser> Users { get; set; }
+
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketPriority> TicketPriorities { get; set; }
+
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketStatus> TicketStatus { get; set; }
+
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketType> TicketTypes { get; set; }
     }
 }

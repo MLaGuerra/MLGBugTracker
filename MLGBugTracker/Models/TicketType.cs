@@ -5,7 +5,9 @@ using System.Web;
 
 namespace MLGBugTracker.Models
 {
-    public class AdminUserView
+    public class TicketType
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
