@@ -19,9 +19,24 @@
         </dd>
 
     </dl>
+    <dl class="dl-horizontal">
+        <dt>
+            Project Users
+        </dt>
+        <dd>
+            @foreach(var users in Model.Users)
+            {
+                <p>@users.FirstName @users.LastName</p>
+            }
+        </dd>
+    </dl>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { projectId = Model.Id}, null)
+    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { projectId = Model.Id }, null)
+    @Html.ActionLink("Assign PM", "AssignPM", new { Id = Model.Id }) |
+    @Html.ActionLink("Add Developers", "AssignDEV", new { projectId = Model.Id }) |
+
+
 </p>

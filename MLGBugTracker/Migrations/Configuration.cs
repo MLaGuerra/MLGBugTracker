@@ -75,7 +75,7 @@ namespace MLGBugTracker.Migrations
                     Email = "projectmanager@coderfoundry.com",
                     FirstName = "Pro",
                     LastName = "Ject",
-                    DisplayName = "Project Manager"
+                    DisplayName = "ProjectManager"
                 }, "ASPnet123$");
             }
 

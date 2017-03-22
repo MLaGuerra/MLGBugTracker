@@ -177,18 +177,23 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\UserRolesHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminProjectViewModel.cs" />
     <Compile Include="Models\AdminUserViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\ProjectDevViewModel.cs" />
+    <Compile Include="Models\ProjectPMViewModel.cs" />
     <Compile Include="Models\Projects.cs" />
     <Compile Include="Models\ProjectUsers.cs" />
     <Compile Include="Models\ProjectUsersViewModel.cs" />
     <Compile Include="Models\TicketAttachment.cs" />
     <Compile Include="Models\TicketComment.cs" />
     <Compile Include="Models\TicketHistory.cs" />
+    <Compile Include="Models\TicketIndexViewModel.cs" />
     <Compile Include="Models\TicketNotification.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\TicketPriority.cs" />
@@ -286,9 +291,12 @@
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\Tickets\Index.cshtml" />
+    <Content Include="Views\Projects\AssignPM.cshtml" />
+    <Content Include="Views\Projects\AssignDEV.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\View\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -312,7 +320,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56961</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:56961/</IISUrl>
+          <IISUrl>http://localhost:56962</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

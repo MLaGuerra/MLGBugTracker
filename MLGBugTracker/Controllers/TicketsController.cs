@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MLGBugTracker.Models;
 using Microsoft.AspNet.Identity;
+using MLGBugTracker.Helpers;
 
 namespace MLGBugTracker.Controllers
 {
@@ -17,11 +18,67 @@ namespace MLGBugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Tickets
+
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.OwnerUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(tickets.ToList());
+            var userId = User.Identity.GetUserId();
+            TicketIndexViewModel model = new TicketIndexViewModel();
+            UserRolesHelper helper = new UserRolesHelper();
+
+            if (User.IsInRole("Admin"))
+            {
+                var tickets = db.Tickets.Include(t => t.AssignedToUser)
+                                        .Include(t => t.OwnerUser)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType);
+                model.AdminTickets = tickets.ToList();
+            }
+
+            if (User.IsInRole("ProjectManager"))
+            {
+                var proj = db.Projects;
+                var myproj = proj.Where(p => p.PMID == userId);
+                var tkts = myproj.SelectMany(t => t.Tickets);
+
+                tkts.Include(t => t.AssignedToUser)
+                                         .Include(t => t.OwnerUser)
+                                         .Include(t => t.Project)
+                                         .Include(t => t.TicketPriority)
+                                         .Include(t => t.TicketStatus)
+                                         .Include(t => t.TicketType);
+                model.PMTickets = tkts.ToList();
+            }
+
+            if (User.IsInRole("Developer"))
+            {
+                var tickets = db.Tickets.Where(t => t.OwnerUserId == userId)
+                                        .Include(t => t.AssignedToUser)
+                                        .Include(t => t.OwnerUser)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType);
+                model.DevTickets = tickets.ToList();
+
+            }
+
+            if (User.IsInRole("Submitter"))
+            {
+                var tickets = db.Tickets.Where(t => t.OwnerUserId == userId)
+                                        .Include(t => t.AssignedToUser)
+                                        .Include(t => t.OwnerUser)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType);
+                model.SubTickets = tickets.ToList();
+            }
+
+            return View(model);
         }
+
 
         // GET: Tickets/Details/5
         public ActionResult Details(int? id)
