@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MLGBugTracker.Models;
+using MLGBugTracker.Helpers;
 
 namespace MLGBugTracker.Controllers
 {
@@ -18,7 +19,18 @@ namespace MLGBugTracker.Controllers
         //[Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
         public ActionResult Index()
         {
-            return View(db.Projects.ToList());
+            var projs = db.Projects.ToList();
+            List<ProjectPMViewModel> model = new List<ProjectPMViewModel>();
+
+            foreach (var p in projs)
+            {
+                ProjectPMViewModel vm = new ProjectPMViewModel();
+                vm.Project = p;
+                vm.ProjectManager = p.PMID != null ? db.Users.Find(p.PMID) : null;
+                model.Add(vm);
+            }
+
+            return View(model);
         }
 
         // GET: Projects/Details/5
@@ -35,6 +47,82 @@ namespace MLGBugTracker.Controllers
             }
             return View(projects);
         }
+
+        public ActionResult AssignPM(int id)
+        {
+            AdminProjectViewModel vm = new AdminProjectViewModel();
+            UserRolesHelper helper = new UserRolesHelper();
+
+            var pms = helper.UsersInRole("ProjectManager");
+
+            vm.PMUsers = new SelectList(pms, "Id", "FirstName");
+            vm.Project = db.Projects.Find(id);
+
+            return View(vm);
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult AssignPM(AdminProjectViewModel adminVm)
+        {
+            if (ModelState.IsValid)
+            {
+                var prj = db.Projects.Find(adminVm.Project.Id);
+                prj.PMID = adminVm.SelectedUser;
+
+                db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            return View(adminVm.Project.Id);
+
+        }
+
+        // GET:
+        public ActionResult AssignDEV(int id)
+        {
+            ProjectDevViewModel vm = new ProjectDevViewModel();
+            UserRolesHelper helper = new UserRolesHelper();
+            ProjectHelpers pHelper = new ProjectHelpers();
+
+            var dev = helper.UsersInRole("Developers");
+            var projdev = pHelper.ProjectUsersByRole(id, "Developer").Select(u => u.Id).ToArray();
+
+            //vm.SelectedUsers = projdev;
+            vm.DevUsers = new MultiSelectList(dev, "Id", "FirstName", projdev);
+            vm.Project = db.Projects.Find(id);
+
+            return View(vm);
+        }
+
+        // POST:
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignDEV(ProjectDevViewModel model)
+        {
+            ProjectHelpers helper = new ProjectHelpers();
+            if (ModelState.IsValid)
+            {
+                var prj = db.Projects.Find(model.Project.Id);
+                foreach (var usr in prj.Users)
+                {
+                    helper.RemoveUserFromProject(usr.Id, prj.Id);
+                }
+
+                foreach (var dev in model.SelectedUsers)
+                {
+                    helper.AddUserToProject(dev, model.Project.Id);
+                }
+
+                //db.SaveChanges();
+
+                return RedirectToAction("Details", new { id = model.Project.Id });
+            }
+            return View(model.Project.Id);
+        }
+
 
         // GET: Projects/Create
         [Authorize(Roles = "Admin, ProjectManager")]

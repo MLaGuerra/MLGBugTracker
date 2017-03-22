@@ -11,24 +11,56 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using MLGBugTracker.Models;
+using System.Net.Mail;
+using System.Web.Configuration;
 
 namespace MLGBugTracker
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            //Send email with Gmail with a separate method
+            SendViaGmail(message);
         }
-    }
 
-    public class SmsService : IIdentityMessageService
-    {
-        public Task SendAsync(IdentityMessage message)
+        private void SendViaGmail(IdentityMessage message)
         {
-            // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
+            // Example mail code
+            try
+            {
+                var smtp = new SmtpClient
+                {
+                    Host = WebConfigurationManager.AppSettings["EmailHost"],
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new System.Net.NetworkCredential(WebConfigurationManager.AppSettings["EmailSender"],
+                    WebConfigurationManager.AppSettings["EmailSenderPassword"])
+                };
+
+                // Configure your credentials
+
+                // Build your message
+                MailMessage mail = new MailMessage();
+                // Configure it
+                mail.To.Add(message.Destination);
+                mail.From = new MailAddress("chaleslinyc@gmail.com", "Charles Li");
+                mail.Subject = message.Subject;
+                mail.Body = message.Body;
+                // Enable if you are sending HTML content
+                mail.IsBodyHtml = false;
+
+                // Send your message
+                smtp.Send(mail);
+
+            }
+            catch (Exception ex)
+            {
+                // Something went wrong sending your message; Handle accordingly                
+            }
         }
     }
 
@@ -77,7 +109,7 @@ namespace MLGBugTracker
                 BodyFormat = "Your security code is {0}"
             });
             manager.EmailService = new EmailService();
-            manager.SmsService = new SmsService();
+            //manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
