@@ -5,6 +5,7 @@
 }
 
 <h2>Details</h2>
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css" />
 
 <div>
     <h4>Ticket</h4>
@@ -83,11 +84,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.AssignToUserId)
+            @Html.DisplayNameFor(model => model.AssignedToUserId)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.AssignToUserId)
+            @Html.DisplayFor(model => model.AssignedToUserId)
         </dd>
 
     </dl>
@@ -96,3 +97,15 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@section scripts
+                {
+    <script src="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css">
+    </script> />
+    <script>
+
+        $(document).ready(function () {
+            $('.table').DataTable();
+        });
+    </script>
+}

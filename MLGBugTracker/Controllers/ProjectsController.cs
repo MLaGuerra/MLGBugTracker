@@ -61,7 +61,7 @@ namespace MLGBugTracker.Controllers
             return View(vm);
         }
 
-        //POST
+        //POST: Projects/
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -80,8 +80,8 @@ namespace MLGBugTracker.Controllers
 
         }
 
-        // GET:
-        public ActionResult AssignDEV(int id)
+        // GET: Projects/
+        public ActionResult AddDEV(int id)
         {
             ProjectDevViewModel vm = new ProjectDevViewModel();
             UserRolesHelper helper = new UserRolesHelper();
@@ -97,10 +97,10 @@ namespace MLGBugTracker.Controllers
             return View(vm);
         }
 
-        // POST:
+        // POST: Projects/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AssignDEV(ProjectDevViewModel model)
+        public ActionResult AddDEV(ProjectDevViewModel model)
         {
             ProjectHelpers helper = new ProjectHelpers();
             if (ModelState.IsValid)

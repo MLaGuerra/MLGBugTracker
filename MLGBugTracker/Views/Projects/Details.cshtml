@@ -5,6 +5,7 @@
 }
 
 <h2>Details</h2>
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css" />
 
 <div>
     <h4>Projects</h4>
@@ -24,21 +25,112 @@
             Project Users
         </dt>
         <dd>
-            @foreach(var users in Model.Users)
+            @foreach (var users in Model.Users)
             {
                 <p>@users.FirstName @users.LastName</p>
             }
         </dd>
     </dl>
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2"></div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Assigned Developer
+                </th>
+                @*<th>
+                        Owner
+                    </th>*@
+                <th>
+                    Priority
+                </th>
+                <th>
+                    Status
+                </th>
+                @*<th>
+                        Type
+                    </th>*@
+                <th>
+                    Title
+                </th>
+                @*<th>
+                        Description
+                    </th>*@
+                <th>
+                    Created
+                </th>
+                @*<th>
+                        Updated
+                    </th>*@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Tickets)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AssignedToUser.FirstName)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OwnerUser.FirstName)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Project.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.TicketType.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>*@
+                    <td>
+                        @item.Created.Date.ToString("MM.dd.yyyy")
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Updated)
+                        </td>*@
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", "Tickets", new { id = item.Id }, null) |
+                        @Html.ActionLink("Details", "Details", "Tickets", new { id = item.Id }, null) |
+                        @Html.ActionLink("Delete", "Delete", "Tickets", new { id = item.Id }, null)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { projectId = Model.Id }, null)
+    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { ticketId = Model.Id }, null)
     @Html.ActionLink("Assign PM", "AssignPM", new { Id = Model.Id }) |
-    @Html.ActionLink("Add Developers", "AssignDEV", new { projectId = Model.Id }) |
-
-
+    @Html.ActionLink("Add Developers", "AddDEV", new { ticketId = Model.Id }) |
 </p>
 
-@* Testing Git Hub Backup *@
+@section scripts
+                {
+    <script src="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css">
+    </script> />
+    <script>
+
+        $(document).ready(function () {
+            $('.table').DataTable();
+        });
+    </script>
+}

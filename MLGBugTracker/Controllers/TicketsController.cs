@@ -95,6 +95,39 @@ namespace MLGBugTracker.Controllers
             return View(ticket);
         }
 
+        public ActionResult AssignDev(int ticketId)
+        {
+            AssignDevViewModel vm = new AssignDevViewModel();
+            ProjectHelpers helper = new ProjectHelpers();
+
+            var tkt = db.Tickets.Find(ticketId);
+            var dev = helper.ProjectUsersByRole(tkt.ProjectId, "Developer");
+
+            vm.Developers = new SelectList(dev, "Id", "FirstName");
+            vm.Ticket = tkt;
+
+            return View(vm);
+        }
+
+
+        //POST: Tickets/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignDev(AssignDevViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var tkt = db.Tickets.Find(model.Ticket.Id);
+
+                tkt.AssignedToUserId = model.SelectedUser;
+                db.SaveChanges();
+
+                return RedirectToAction("Details", "Projects", new { id = tkt.ProjectId });
+            }
+            return View(model.Ticket.Id);
+        }
+
+    
         // GET: Tickets/Create
         [Authorize(Roles = "Submitter")]
         public ActionResult Create(int projectId)
@@ -127,7 +160,7 @@ namespace MLGBugTracker.Controllers
                 ticket.TicketStatusID = 1;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Project", new { id = ticket.ProjectId });
             }
 
             ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "DisplayName", ticket.OwnerUserId);
