@@ -98,7 +98,7 @@
                             @Html.DisplayFor(modelItem => item.Description)
                         </td>*@
                     <td>
-                        @item.Created.Date.ToString("MM.dd.yyyy")
+                        @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
                     @*<td>
                             @Html.DisplayFor(modelItem => item.Updated)
@@ -118,9 +118,9 @@
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { ticketId = Model.Id }, null)
+    @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { projectId = Model.Id }, null) |
     @Html.ActionLink("Assign PM", "AssignPM", new { Id = Model.Id }) |
-    @Html.ActionLink("Add Developers", "AddDEV", new { ticketId = Model.Id }) |
+    @Html.ActionLink("Add Developers", "AddDEV", new { id = Model.Id }) |
 </p>
 
 @section scripts

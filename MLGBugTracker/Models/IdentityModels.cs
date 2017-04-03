@@ -20,6 +20,8 @@ namespace MLGBugTracker.Models
         public string DisplayName { get; internal set; }
         public string FirstName { get; internal set; }
         public string LastName { get; internal set; }
+        public string FullName { get; internal set; }
+
 
         public virtual ICollection<Projects>Project { get; set; }
 
@@ -29,6 +31,8 @@ namespace MLGBugTracker.Models
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
 
             // Add custom user claims here
+            userIdentity.AddClaim(new Claim("Name", DisplayName));
+            //userIdentity.AddClaim(new Claim("Name", FullName));
             return userIdentity;
         }
     }
@@ -53,8 +57,10 @@ namespace MLGBugTracker.Models
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketPriority> TicketPriorities { get; set; }
 
-        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketStatus> TicketStatus { get; set; }
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketStatus> TicketStatuses { get; set; }
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketType> TicketTypes { get; set; }
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketHistory> TicketHistories { get; set; }
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketComment> TicketComments { get; set; }
     }
 }

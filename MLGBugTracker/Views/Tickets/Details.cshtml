@@ -1,4 +1,5 @@
 ﻿@model MLGBugTracker.Models.Ticket
+@using Microsoft.AspNet.Identity
 
 @{
     ViewBag.Title = "Details";
@@ -12,7 +13,7 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.OwnerUser.DisplayName)
+            Owner
         </dt>
 
         <dd>
@@ -20,7 +21,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TicketPriority.Name)
+            Priority
         </dt>
 
         <dd>
@@ -28,7 +29,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TicketStatus.Name)
+            Status
         </dt>
 
         <dd>
@@ -36,7 +37,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TicketType.Name)
+            Type
         </dt>
 
         <dd>
@@ -93,9 +94,82 @@
 
     </dl>
 </div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div>
+            @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || Model.OwnerUserId == User.Identity.GetUserId() || Model.AssignedToUserId == User.Identity.GetUserId())
+            {
+                <div>
+                    <h4>Leave a comment</h4>
+                    @using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @*<input type="hidden" name="TicketId" value="@Model.Id" />*@
+                            @Html.Hidden("TicketId", Model.Id)
+                        </div>
+                        <div class="form-group">
+                            @*<input type="hidden" name="UserId" value="@userId" />*@
+                            @Html.Hidden("UserId", User.Identity.GetUserId())
+                        </div>
+                        <div class="form-group">
+                            @*<textarea class="form-control" name="Comment" rows="3"></textarea>*@
+                            @Html.TextArea("Comment", new { @class = "form-control", rows = "3" })
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel-heading">
+            <h3 class="panel-title"> Comments</h3>
+        </div>
+        <div class="mrgn-2">
+            @foreach (var com in Model.TicketComments)
+            {
+                <p>Created on : @com.Created.DateTime.ToLongDateString()</p>
+                <p>By : @com.User.DisplayName</p>
+                <p>@com.Comment</p>
+                <p>
+                    @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Edit Comment", "EditComm", "CommAttach", new { id = com.Id }, null)<span> | </span>
+                        @Html.ActionLink("Delete Comment", "DelComm", "CommAttach", new { id = com.Id }, null)
+                    }
+                </p>
+                <br />
+            }
+        </div>
+    </div>
+</div>
+
+<div class="mrgn-2">
+    @foreach (var com in Model.TicketComments)
+    {
+        <p>Created on : @com.Created.DateTime.ToLongDateString()</p>
+        <p>By : @com.User.DisplayName</p>
+                    <p>@com.Comment</p>
+                    <p>
+                        @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
+                        {
+                            @Html.ActionLink("Edit Comment", "EditComm", "CommAttach", new { id = com.Id }, null)<span> | </span>
+                            @Html.ActionLink("Delete Comment", "DelComm", "CommAttach", new { id = com.Id }, null)
+                        }
+                    </p>
+                    <br />
+    }
+</div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index") |
+    @Html.ActionLink("Assign Dev", "AssignDev", new { ticketId = Model.Id })
+
 </p>
 
 @section scripts

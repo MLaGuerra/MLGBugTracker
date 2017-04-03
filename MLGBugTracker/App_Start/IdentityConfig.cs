@@ -13,6 +13,7 @@ using Microsoft.Owin.Security;
 using MLGBugTracker.Models;
 using System.Net.Mail;
 using System.Web.Configuration;
+using System.Net;
 
 namespace MLGBugTracker
 {
@@ -21,46 +22,48 @@ namespace MLGBugTracker
         public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            //Send email with Gmail with a separate method
-            SendViaGmail(message);
+            await SendMailAsync(message);
+            ////Send email with Gmail with a separate method
+            //SendViaGmail(message);
         }
-
-        private void SendViaGmail(IdentityMessage message)
+        public async Task<bool> SendMailAsync(IdentityMessage message)
         {
-            // Example mail code
-            try
+            //Private.config Set-up
+            var GmailUserName = WebConfigurationManager.AppSettings["username"];
+            var GmailPassword = WebConfigurationManager.AppSettings["password"];
+            var host = WebConfigurationManager.AppSettings["host"];
+            int port = Convert.ToInt32(WebConfigurationManager.AppSettings["port"]);
+            var from = new MailAddress(WebConfigurationManager.AppSettings["emailfrom"], "BugTracker");
+            //Email Object Set-up
+            var email = new MailMessage(from, new MailAddress(message.Destination))
             {
-                var smtp = new SmtpClient
+                Subject = message.Subject,
+                Body = message.Body,
+                IsBodyHtml = true,
+            };
+            //SMTP Object Set-up
+            using (var smtp = new SmtpClient()
+            {
+                Host = host,
+                Port = port,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(GmailUserName, GmailPassword)
+            })
+            {
+                try
                 {
-                    Host = WebConfigurationManager.AppSettings["EmailHost"],
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new System.Net.NetworkCredential(WebConfigurationManager.AppSettings["EmailSender"],
-                    WebConfigurationManager.AppSettings["EmailSenderPassword"])
-                };
-
-                // Configure your credentials
-
-                // Build your message
-                MailMessage mail = new MailMessage();
-                // Configure it
-                mail.To.Add(message.Destination);
-                mail.From = new MailAddress("chaleslinyc@gmail.com", "Charles Li");
-                mail.Subject = message.Subject;
-                mail.Body = message.Body;
-                // Enable if you are sending HTML content
-                mail.IsBodyHtml = false;
-
-                // Send your message
-                smtp.Send(mail);
-
-            }
-            catch (Exception ex)
-            {
-                // Something went wrong sending your message; Handle accordingly                
-            }
+                    await smtp.SendMailAsync(email);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    // Something went wrong sending your message; Handle accordingly
+                    Console.WriteLine(e.Message);
+                    return false;
+                }
+            };
         }
     }
 
@@ -72,7 +75,7 @@ namespace MLGBugTracker
         {
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
             // Configure validation logic for usernames
@@ -113,7 +116,7 @@ namespace MLGBugTracker
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = 
+                manager.UserTokenProvider =
                     new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;

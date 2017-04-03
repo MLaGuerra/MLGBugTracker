@@ -24,7 +24,7 @@ namespace MLGBugTracker.Models
         [Display(Name = "Priority")]
         public int TicketPriorityId { get; set; }
         [Display(Name = "Status")]
-        public int TicketStatusID { get; set; }
+        public int TicketStatusId { get; set; }
         [Display(Name = "Owner")]
         public string OwnerUserId { get; set; }
         [Display(Name = "Assigned To")]

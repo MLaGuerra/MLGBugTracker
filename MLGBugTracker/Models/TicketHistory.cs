@@ -9,7 +9,7 @@ namespace MLGBugTracker.Models
     public class TicketHistory
     {
         public int Id { get; set; }
-        public string TicketId { get; set; }
+        public int TicketId { get; set; }
         [Required]
         public string Property { get; set; }
         public string EditId { get; set; }

@@ -47,7 +47,7 @@ namespace MLGBugTracker.Controllers
             }
             return View(projects);
         }
-
+        // GET: Projects/
         public ActionResult AssignPM(int id)
         {
             AdminProjectViewModel vm = new AdminProjectViewModel();
@@ -87,7 +87,7 @@ namespace MLGBugTracker.Controllers
             UserRolesHelper helper = new UserRolesHelper();
             ProjectHelpers pHelper = new ProjectHelpers();
 
-            var dev = helper.UsersInRole("Developers");
+            var dev = helper.UsersInRole("Developer");
             var projdev = pHelper.ProjectUsersByRole(id, "Developer").Select(u => u.Id).ToArray();
 
             //vm.SelectedUsers = projdev;
@@ -100,7 +100,7 @@ namespace MLGBugTracker.Controllers
         // POST: Projects/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddDEV(ProjectDevViewModel model)
+        public ActionResult AddDEV([Bind(Include = "Project, SelectedUsers")] ProjectDevViewModel model)
         {
             ProjectHelpers helper = new ProjectHelpers();
             if (ModelState.IsValid)
