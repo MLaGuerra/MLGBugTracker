@@ -30,7 +30,7 @@ namespace MLGBugTracker.Models
         [Display(Name = "Assigned To")]
         public string AssignedToUserId { get; set; }
 
-        public virtual Projects Project { get; set; }
+        public virtual Project Project { get; set; }
         public virtual TicketStatus TicketStatus { get; set; }
         public virtual TicketPriority TicketPriority { get; set; }
         public virtual TicketType TicketType { get; set; }

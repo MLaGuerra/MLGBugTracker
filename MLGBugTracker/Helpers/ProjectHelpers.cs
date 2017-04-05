@@ -26,7 +26,7 @@ namespace MLGBugTracker.Helpers
             return (flag);
         }
 
-        public ICollection<Projects> ListUserProjects(string userId)
+        public ICollection<Project> ListUserProjects(string userId)
         {
             ApplicationUser user = db.Users.Find(userId);
 
@@ -38,7 +38,7 @@ namespace MLGBugTracker.Helpers
         {
             if (!IsUserOnProject(userId, projectId))
             {
-                Projects proj = db.Projects.Find(projectId);
+                Project proj = db.Projects.Find(projectId);
                 var newUser = db.Users.Find(userId);
 
                 proj.Users.Add(newUser);
@@ -50,7 +50,7 @@ namespace MLGBugTracker.Helpers
         {
             if (IsUserOnProject(userId, projectId))
             {
-                Projects proj = db.Projects.Find(projectId);
+                Project proj = db.Projects.Find(projectId);
                 var delUser = db.Users.Find(userId);
 
                 proj.Users.Remove(delUser);

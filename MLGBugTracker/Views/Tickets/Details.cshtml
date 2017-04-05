@@ -8,8 +8,15 @@
 <h2>Details</h2>
 <link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css" />
 
+
 <div>
     <h4>Ticket</h4>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index") |
+        @Html.ActionLink("Assign Dev", "AssignDev", new { ticketId = Model.Id })
+
+    </p>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -66,6 +73,7 @@
 
         <dd>
             @Html.DisplayFor(model => model.Created)
+            @*@item.Created.Date.ToString("MM/dd/yyyy")*@
         </dd>
 
         <dt>
@@ -89,9 +97,8 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.AssignedToUserId)
+            @Html.DisplayFor(model => model.AssignedToUser.DisplayName)
         </dd>
-
     </dl>
 </div>
 
@@ -102,23 +109,22 @@
             {
                 <div>
                     <h4>Leave a comment</h4>
+
                     @using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                     {
                         @Html.AntiForgeryToken()
                         <div class="form-group">
-                            @*<input type="hidden" name="TicketId" value="@Model.Id" />*@
                             @Html.Hidden("TicketId", Model.Id)
                         </div>
                         <div class="form-group">
-                            @*<input type="hidden" name="UserId" value="@userId" />*@
                             @Html.Hidden("UserId", User.Identity.GetUserId())
                         </div>
                         <div class="form-group">
-                            @*<textarea class="form-control" name="Comment" rows="3"></textarea>*@
                             @Html.TextArea("Comment", new { @class = "form-control", rows = "3" })
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            @*<button type="submit" class="btn btn-success">Submit</button>*@
+                            <input type="submit" value="Submit" class="btn btn-default" />
                         </div>
                     }
                 </div>
@@ -138,8 +144,8 @@
                 <p>
                     @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
                     {
-                        @Html.ActionLink("Edit Comment", "EditComm", "CommAttach", new { id = com.Id }, null)<span> | </span>
-                        @Html.ActionLink("Delete Comment", "DelComm", "CommAttach", new { id = com.Id }, null)
+                        @Html.ActionLink("Edit Comment", "Edit", "TicketComments", new { id = com.Id }, null)<span> | </span>
+                        @Html.ActionLink("Delete Comment", "Delete", "TicketComments", new { id = com.Id }, null)
                     }
                 </p>
                 <br />
@@ -148,34 +154,68 @@
     </div>
 </div>
 
-<div class="mrgn-2">
-    @foreach (var com in Model.TicketComments)
-    {
-        <p>Created on : @com.Created.DateTime.ToLongDateString()</p>
-        <p>By : @com.User.DisplayName</p>
-                    <p>@com.Comment</p>
-                    <p>
-                        @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
-                        {
-                            @Html.ActionLink("Edit Comment", "EditComm", "CommAttach", new { id = com.Id }, null)<span> | </span>
-                            @Html.ActionLink("Delete Comment", "DelComm", "CommAttach", new { id = com.Id }, null)
-                        }
-                    </p>
-                    <br />
-    }
+<div class="row">
+    <div class="col-md-6">
+        <div>
+            @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || Model.OwnerUserId == User.Identity.GetUserId() || Model.AssignedToUserId == User.Identity.GetUserId())
+            {
+                <div>
+                    <h4>Add Attachment</h4>
+
+                    @using (Html.BeginForm("AddAttachment", "Tickets", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "Multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.Hidden("TicketId", Model.Id)
+                        </div>
+                        <div class="form-group">
+                            @Html.Hidden("UserId", User.Identity.GetUserId())
+                            <div class="col-md-10">
+                                <input name="image" type="file" class="form-control" id="fileUpload" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @*<button type="submit" class="btn btn-success">Submit</button>*@
+                            <input type="submit" value="Submit" class="btn btn-default" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel-heading">
+            <h3 class="panel-title"> Attachments</h3>
+        </div>
+        <div class="mrgn-2">
+            @foreach (var att in Model.TicketAttachments)
+            {
+                <p>Created on : @att.Created.DateTime.ToLongDateString()</p>
+                @*<p>By : @att.User.DisplayName</p>*@
+                <p>
+                    @if (att.FileUrl != null)
+                {
+                        <img src="@Url.Content(att.FileUrl)" class="media-url-preview" style="width:auto;height:50px;">
+                    }
+                </p>
+                <p>
+                    @if (User.Identity.GetUserId() == att.UserId || User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Edit Attachment", "Edit", "TicketAttachments", new { id = att.Id }, null)<span> | </span>
+                        @Html.ActionLink("Delete Attachment", "Delete", "TicketAttachments", new { id = att.Id }, null)
+                    }
+                </p>
+                <br />
+            }
+        </div>
+    </div>
 </div>
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Assign Dev", "AssignDev", new { ticketId = Model.Id })
-
-</p>
 
 @section scripts
                 {
     <script src="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css">
-    </script> />
+    </script>
     <script>
 
         $(document).ready(function () {

@@ -6,9 +6,9 @@ using System.Web;
 
 namespace MLGBugTracker.Models
 {
-    public class Projects
+    public class Project
     {
-        public Projects()
+        public Project()
         {
             this.Tickets = new HashSet<Ticket>();
             this.Users = new HashSet<ApplicationUser>();

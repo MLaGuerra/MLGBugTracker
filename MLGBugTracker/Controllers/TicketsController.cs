@@ -10,6 +10,7 @@ using MLGBugTracker.Models;
 using Microsoft.AspNet.Identity;
 using MLGBugTracker.Helpers;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MLGBugTracker.Controllers
 {
@@ -130,14 +131,35 @@ namespace MLGBugTracker.Controllers
 
                 await ems.SendMailAsync(msg);
 
-                return RedirectToAction("Details", "Projects", new { id = tkt.ProjectId });
+                return RedirectToAction("Details", "Project", new { id = tkt.ProjectId });
             }
             return View(model.Ticket.Id);
         }
 
+        //POST; Add Attachment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult AddAttachment(HttpPostedFileBase image, int ticketId)
+        {
+            TicketAttachment ta = new TicketAttachment();
+            if (ImageUploadValidator.IsWebFriendlyImage(image))
+            {
+                var fileName = Path.GetFileName(image.FileName);
+                image.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                ta.FileUrl = "/Uploads/" + fileName;
+            }
+
+            ta.TicketId = ticketId;
+            ta.Created = DateTimeOffset.Now;
+            db.TicketAttachments.Add(ta);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new { id = ta.TicketId });
+        }
 
         // GET: Tickets/Create
-        [Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Submitter, Admin")]
         public ActionResult Create(int projectId)
         {
             Ticket ticket = new Ticket();
@@ -153,8 +175,8 @@ namespace MLGBugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Submitter")]
-        public ActionResult Create([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusID,OwnerUserId,AssignedToUserId")] Ticket ticket)
+        [Authorize(Roles = "Submitter, Admin")]
+        public ActionResult Create([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusID,OwnerUserId,AssignedToUserId")] Ticket ticket, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
@@ -173,7 +195,7 @@ namespace MLGBugTracker.Controllers
             Ticket tkt = new Ticket();
             ticket.ProjectId = ticket.ProjectId;
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
-            return HttpNotFound();            
+            return HttpNotFound();
         }
 
         // GET: Tickets/Edit/5
@@ -282,7 +304,7 @@ namespace MLGBugTracker.Controllers
                     db.SaveChanges();
                 }
 
-                return RedirectToAction("details", "Projects", new { id = ticket.ProjectId });
+                return RedirectToAction("Details", "Project", new { id = ticket.ProjectId });
             }
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusID = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);

@@ -18,7 +18,7 @@ namespace MLGBugTracker.Models
         public DateTimeOffset Changed { get; set; }
         public string UserId { get; set; }
 
-        public virtual Ticket ticket { get; set; }
+        public virtual Ticket Ticket { get; set; }
         public virtual ApplicationUser User { get; set; }
     }
 }

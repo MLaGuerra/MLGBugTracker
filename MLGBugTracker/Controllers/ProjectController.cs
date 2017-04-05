@@ -11,11 +11,11 @@ using MLGBugTracker.Helpers;
 
 namespace MLGBugTracker.Controllers
 {
-    public class ProjectsController : Controller
+    public class ProjectController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Projects
+        // GET: Project
         //[Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
         public ActionResult Index()
         {
@@ -33,21 +33,23 @@ namespace MLGBugTracker.Controllers
             return View(model);
         }
 
-        // GET: Projects/Details/5
+        // GET: Project/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Projects projects = db.Projects.Find(id);
+            Project projects = db.Projects.Find(id);
             if (projects == null)
             {
                 return HttpNotFound();
             }
             return View(projects);
         }
-        // GET: Projects/
+        // GET: Project/AssignPM
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AssignPM(int id)
         {
             AdminProjectViewModel vm = new AdminProjectViewModel();
@@ -61,10 +63,10 @@ namespace MLGBugTracker.Controllers
             return View(vm);
         }
 
-        //POST: Projects/
+        //POST: Project/AssignPM
         [HttpPost]
         [ValidateAntiForgeryToken]
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AssignPM(AdminProjectViewModel adminVm)
         {
             if (ModelState.IsValid)
@@ -80,7 +82,8 @@ namespace MLGBugTracker.Controllers
 
         }
 
-        // GET: Projects/
+        // GET: Project/AddDEV
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AddDEV(int id)
         {
             ProjectDevViewModel vm = new ProjectDevViewModel();
@@ -97,9 +100,10 @@ namespace MLGBugTracker.Controllers
             return View(vm);
         }
 
-        // POST: Projects/
+        // POST: Project/AddDEV
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AddDEV([Bind(Include = "Project, SelectedUsers")] ProjectDevViewModel model)
         {
             ProjectHelpers helper = new ProjectHelpers();
@@ -123,40 +127,8 @@ namespace MLGBugTracker.Controllers
             return View(model.Project.Id);
         }
 
-
-        public ActionResult AssignPM(int id)
-        {
-            AdminProjectViewModel vm = new AdminProjectViewModel();
-            UserRolesHelper helper = new UserRolesHelper();
-
-            var pms = helper.UsersInRole("ProjectManager");
-
-            vm.PMUsers = new SelectList(pms, "Id", "FirstName");
-            vm.Project = db.Projects.Find(id);
-
-            return View(vm);
-        }
-
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public ActionResult AssignPM(AdminProjectViewModel adminVm)
-        {
-            if (ModelState.IsValid)
-            {
-                var prj = db.Projects.Find(adminVm.Project.Id);
-                prj.PMID = adminVm.SelectedUser;
-
-                db.SaveChanges();
-
-                return RedirectToAction("Index");
-            }
-            return View(adminVm.Project.Id);
-
-        }
-
-        // GET:
+        // GET: Project/AssignDEV
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AssignDEV(int id)
         {
             ProjectDevViewModel vm = new ProjectDevViewModel();
@@ -173,9 +145,10 @@ namespace MLGBugTracker.Controllers
             return View(vm);
         }
 
-        // POST:
+        // POST: Project/AssignDEV
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AssignDEV(ProjectDevViewModel model)
         {
             ProjectHelpers helper = new ProjectHelpers();
@@ -200,20 +173,20 @@ namespace MLGBugTracker.Controllers
         }
 
 
-        // GET: Projects/Create
+        // GET: Project/Create
         [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Projects/Create
+        // POST: Project/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public ActionResult Create([Bind(Include = "Id,Name")] Projects projects)
+        public ActionResult Create([Bind(Include = "Id,Name")] Project projects)
         {
             if (ModelState.IsValid)
             {
@@ -225,7 +198,7 @@ namespace MLGBugTracker.Controllers
             return View(projects);
         }
 
-        // GET: Projects/Edit/5
+        // GET: Project/Edit/5
         [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult Edit(int? id)
         {
@@ -253,7 +226,7 @@ namespace MLGBugTracker.Controllers
             return View(projectVM);
         }
 
-        // POST: Projects/Edit/5
+        // POST: Project/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -298,14 +271,14 @@ namespace MLGBugTracker.Controllers
             return View(projectVM);
         }
 
-        // GET: Projects/Delete/5
+        // GET: Project/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Projects projects = db.Projects.Find(id);
+            Project projects = db.Projects.Find(id);
             if (projects == null)
             {
                 return HttpNotFound();
@@ -313,13 +286,13 @@ namespace MLGBugTracker.Controllers
             return View(projects);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Project/Delete/5
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Projects projects = db.Projects.Find(id);
+            Project projects = db.Projects.Find(id);
             db.Projects.Remove(projects);
             db.SaveChanges();
             return RedirectToAction("Index");

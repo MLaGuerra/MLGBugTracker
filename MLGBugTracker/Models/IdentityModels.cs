@@ -14,7 +14,7 @@ namespace MLGBugTracker.Models
     {
         public ApplicationUser()
         {
-            Project = new HashSet<Projects>();
+            Project = new HashSet<Project>();
         }
 
         public string DisplayName { get; internal set; }
@@ -23,9 +23,7 @@ namespace MLGBugTracker.Models
         public string FullName { get; internal set; }
 
 
-        public virtual ICollection<Projects>Project { get; set; }
-
-        public virtual ICollection<Projects>Project { get; set; }
+        public virtual ICollection<Project>Project { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -51,18 +49,18 @@ namespace MLGBugTracker.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<MLGBugTracker.Models.Projects> Projects { get; set; }
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.Project> Projects { get; set; }
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.Ticket> Tickets { get; set; }
-
-        //public System.Data.Entity.DbSet<MLGBugTracker.Models.ApplicationUser> Users { get; set; }
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketPriority> TicketPriorities { get; set; }
 
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketStatus> TicketStatuses { get; set; }
-
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketNotification> TicketNotifications { get; set; }
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketType> TicketTypes { get; set; }
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketHistory> TicketHistories { get; set; }
         public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketComment> TicketComments { get; set; }
+        public System.Data.Entity.DbSet<MLGBugTracker.Models.TicketAttachment> TicketAttachments { get; set; }
+
     }
 }

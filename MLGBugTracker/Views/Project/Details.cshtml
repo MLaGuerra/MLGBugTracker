@@ -1,4 +1,4 @@
-﻿@model MLGBugTracker.Models.Projects
+﻿@model MLGBugTracker.Models.Project
 
 @{
     ViewBag.Title = "Details";
@@ -22,7 +22,7 @@
     </dl>
     <dl class="dl-horizontal">
         <dt>
-            Project Users
+            Team Members
         </dt>
         <dd>
             @foreach (var users in Model.Users)
@@ -42,30 +42,18 @@
                 <th>
                     Assigned Developer
                 </th>
-                @*<th>
-                        Owner
-                    </th>*@
                 <th>
                     Priority
                 </th>
                 <th>
                     Status
                 </th>
-                @*<th>
-                        Type
-                    </th>*@
                 <th>
                     Title
                 </th>
-                @*<th>
-                        Description
-                    </th>*@
                 <th>
                     Created
                 </th>
-                @*<th>
-                        Updated
-                    </th>*@
                 <th></th>
             </tr>
         </thead>
@@ -76,35 +64,20 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.AssignedToUser.FirstName)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.OwnerUser.FirstName)
-                        </td>*@
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Project.Name)
-                        </td>*@
                     <td>
                         @Html.DisplayFor(modelItem => item.TicketPriority.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.TicketStatus.Name)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.TicketType.Name)
-                        </td>*@
                     <td>
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>*@
                     <td>
                         @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Updated)
-                        </td>*@
                     <td>
-                        @Html.ActionLink("Edit", "Edit", "Tickets", new { id = item.Id }, null) |
+                        @Html.ActionLink("Edit", "Edit", "Tickets", new { id = item.ProjectId }, null) |
                         @Html.ActionLink("Details", "Details", "Tickets", new { id = item.Id }, null) |
                         @Html.ActionLink("Delete", "Delete", "Tickets", new { id = item.Id }, null)
                     </td>
@@ -120,15 +93,14 @@
     @Html.ActionLink("Back to List", "Index") |
     @Html.ActionLink("Add a Ticket", "Create", "Tickets", new { projectId = Model.Id }, null) |
     @Html.ActionLink("Assign PM", "AssignPM", new { Id = Model.Id }) |
-    @Html.ActionLink("Add Developers", "AddDEV", new { id = Model.Id }) |
+    @Html.ActionLink("Add Team Member", "AddDEV", new { id = Model.Id }) |
 </p>
 
 @section scripts
                 {
     <script src="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css">
-    </script> />
+    </script>
     <script>
-
         $(document).ready(function () {
             $('.table').DataTable();
         });

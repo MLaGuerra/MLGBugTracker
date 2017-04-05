@@ -7,7 +7,7 @@ namespace MLGBugTracker.Models
 {
     public class ProjectPMViewModel
     {
-        public Projects Project { get; set; }
+        public Project Project { get; set; }
         public ApplicationUser ProjectManager { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace MLGBugTracker.Models
     public class TicketAttachment
     {
         public int Id { get; set; }
-        public string TickeId { get; set; }
+        public int TicketId { get; set; }
         public string FilePath { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }

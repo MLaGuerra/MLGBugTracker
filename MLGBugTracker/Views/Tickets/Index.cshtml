@@ -76,11 +76,12 @@
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Created)
+                        @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Updated)
+                        @item.Updated.Date.ToString("MM/dd/yyyy")
                     </td>
+
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                         @Html.ActionLink("Details", "Details", new { id = item.Id }) |
@@ -94,7 +95,7 @@
 
 @if (User.IsInRole("ProjectManager"))
 {
-    <h2>project Manager Tickets</h2>
+    <h2>Project Manager Tickets</h2>
     <table class="table">
         <thead>
             <tr>
@@ -158,10 +159,10 @@
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @item.Created.Date.ToString("MM.dd.yyyy")
+                        @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
-                        @item.Updated.Date.ToString("MM.dd.yyyy")
+                        @item.Updated.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
@@ -239,10 +240,10 @@
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Created)
+                        @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Updated)
+                        @item.Updated.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
@@ -323,10 +324,10 @@
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Created)
+                        @item.Created.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Updated)
+                        @item.Updated.Date.ToString("MM/dd/yyyy")
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
@@ -342,7 +343,7 @@
 @section scripts
                 {
     <script src="//cdn.datatables.net/1.10.13/css/jquery.datatbles.min.css" type="text/css">
-    </script> />
+    </script>
     <script>
         $(document).ready(function () {
             $('.table').DataTable();

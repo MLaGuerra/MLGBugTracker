@@ -8,7 +8,7 @@ namespace MLGBugTracker.Models
 {
     public class ProjectDevViewModel
     {
-        public Projects Project { get; set; }
+        public Project Project { get; set; }
         public MultiSelectList DevUsers { get; set; }
         public List<string> SelectedUsers { get; set; }
     }
