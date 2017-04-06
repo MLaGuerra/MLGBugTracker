@@ -49,7 +49,7 @@ namespace MLGBugTracker.Controllers
             return View(projects);
         }
         // GET: Project/AssignPM
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = "Admin")]
         public ActionResult AssignPM(int id)
         {
             AdminProjectViewModel vm = new AdminProjectViewModel();
@@ -66,7 +66,7 @@ namespace MLGBugTracker.Controllers
         //POST: Project/AssignPM
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = "Admin")]
         public ActionResult AssignPM(AdminProjectViewModel adminVm)
         {
             if (ModelState.IsValid)
@@ -272,6 +272,7 @@ namespace MLGBugTracker.Controllers
         }
 
         // GET: Project/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

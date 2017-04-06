@@ -54,7 +54,7 @@ namespace MLGBugTracker.Controllers
 
             if (User.IsInRole("Developer"))
             {
-                var tickets = db.Tickets.Where(t => t.OwnerUserId == userId)
+                var tickets = db.Tickets.Where(t => t.AssignedToUserId == userId)
                                         .Include(t => t.AssignedToUser)
                                         .Include(t => t.OwnerUser)
                                         .Include(t => t.Project)
@@ -229,6 +229,7 @@ namespace MLGBugTracker.Controllers
             {
                 Ticket oldTicket = db.Tickets.AsNoTracking().Where(m => m.Id == ticket.Id).FirstOrDefault();
 
+                ticket.Updated = DateTimeOffset.Now;
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 //return RedirectToAction("Index");
