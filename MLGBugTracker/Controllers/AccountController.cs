@@ -121,7 +121,7 @@ namespace MLGBugTracker.Controllers
                     Password = "Abc&123!";
                     break;
                 default:
-                    Email = "sumitter@demo.com";
+                    Email = "submitter@demo.com";
                     Password = "Abc&123!";
                     break;
             }

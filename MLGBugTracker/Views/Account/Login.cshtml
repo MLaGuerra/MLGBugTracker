@@ -45,17 +45,39 @@
                     @Html.ActionLink("Register as a new user", "Register")
                 </p>
                 //Enable this once you have account confirmation enabled for password reset functionality
-                    <p>
-                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                    </p>
+                <p>
+                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                </p>
             }
         </section>
+
+
+
+
+
     </div>
     <div class="col-md-4">
+        <h4>Use a guest account to log in.</h4>
+        <hr />
+        <p>
+            @Html.ActionLink("Guest Admin", "GuestLogin", new { ReturnUrl = ViewBag.ReturnUrl, type = "Admin" }, new { @class = "btn btn-primary" })
+        </p>
+        <p>
+            @Html.ActionLink("Guest Project Manager", "GuestLogin", new { ReturnUrl = ViewBag.ReturnUrl, type = "ProjectManager" }, new { @class = "btn btn-primary" })
+        </p>
+        <p>
+            @Html.ActionLink("Guest Developer", "GuestLogin", new { ReturnUrl = ViewBag.ReturnUrl, type = "Developer" }, new { @class = "btn btn-primary" })
+        </p>
+        <p>
+            @Html.ActionLink("Guest Submitter", "GuestLogin", new { ReturnUrl = ViewBag.ReturnUrl, type = "Submitter" }, new { @class = "btn btn-primary" })
+        </p>
+
+        <br />
         <section id="socialLoginForm">
             @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
         </section>
     </div>
+
 </div>
 
 @section Scripts {

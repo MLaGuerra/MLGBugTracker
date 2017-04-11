@@ -58,11 +58,11 @@ namespace MLGBugTracker
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "380416079648-9lsg3jubokrrhn9man4khc4mr6jhb058.apps.googleusercontent.com",
+                ClientSecret = "QmiO36785W9VTcO9iTd-nqWE"
+            });
         }
     }
 }

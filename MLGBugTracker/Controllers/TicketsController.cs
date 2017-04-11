@@ -96,6 +96,7 @@ namespace MLGBugTracker.Controllers
             return View(ticket);
         }
         // GET: Tickets/AssignDev
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult AssignDev(int ticketId)
         {
             AssignDevViewModel vm = new AssignDevViewModel();
@@ -114,6 +115,7 @@ namespace MLGBugTracker.Controllers
         //POST: Tickets/AssignDev
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Project Manager")]
         public async Task<ActionResult> AssignDev(AssignDevViewModel model)
         {
             if (ModelState.IsValid)
@@ -153,6 +155,16 @@ namespace MLGBugTracker.Controllers
             ta.TicketId = ticketId;
             ta.Created = DateTimeOffset.Now;
             db.TicketAttachments.Add(ta);
+            db.SaveChanges();
+
+            TicketHistory  history = new TicketHistory()
+            {
+                Changed = DateTime.Now,
+                TicketId = ticketId,
+                Property = "Added Attachment",
+                UserId = User.Identity.GetUserId()
+            };
+            db.TicketHistories.Add(history);
             db.SaveChanges();
 
             return RedirectToAction("Details", new { id = ta.TicketId });
@@ -223,7 +235,7 @@ namespace MLGBugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusID,OwnerUserId,AssignedToUserId")] Ticket ticket)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description,Created,Updated,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusID,OwnerUserId,AssignedToUserId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -304,6 +316,15 @@ namespace MLGBugTracker.Controllers
                     db.TicketHistories.Add(tHistory);
                     db.SaveChanges();
                 }
+
+                EmailService ems = new EmailService();
+                IdentityMessage msg = new IdentityMessage();
+
+                msg.Body = "Your ticket " + ticket.Title + " has been modified.";
+                msg.Destination = db.Users.Find(ticket.AssignedToUserId).Email;
+                msg.Subject = "New Ticket Assignment";
+
+                await ems.SendMailAsync(msg);
 
                 return RedirectToAction("Details", "Project", new { id = ticket.ProjectId });
             }

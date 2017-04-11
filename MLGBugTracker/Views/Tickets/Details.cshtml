@@ -10,7 +10,11 @@
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Assign Dev", "AssignDev", new { ticketId = Model.Id })
+    @if (User.IsInRole("Admin") ||
+                          User.IsInRole("ProjectManager"))
+    {
+        @Html.ActionLink("Assign Dev", "AssignDev", new { ticketId = Model.Id });
+    }
 </p>
 <hr />
 
@@ -85,7 +89,7 @@
             <dd>
                 @if (Model.Updated < Model.Created)
                 {
-                @Html.DisplayFor(model => model.Updated)
+                    @Html.DisplayFor(model => model.Updated)
                 }
             </dd>
 
@@ -136,25 +140,25 @@
                 </thead>
                 <tbody>
                     @foreach (var item in Model.TicketHistories)
-                        {
-                    <tr>
-                        <td>
-                            @item.Changed.Date.ToString("MM/dd/yy")
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Property)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.OldValue)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.NewValue)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.DisplayName)
-                        </td>
-                    </tr>
-                        }
+                    {
+                        <tr>
+                            <td>
+                                @item.Changed.Date.ToString("MM/dd/yy")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Property)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OldValue)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NewValue)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.DisplayName)
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -168,26 +172,26 @@
         <div>
             @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || Model.OwnerUserId == User.Identity.GetUserId() || Model.AssignedToUserId == User.Identity.GetUserId())
             {
-            <div>
-                <h4>Leave a comment</h4>
+                <div>
+                    <h4>Leave a comment</h4>
 
-                @using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    @using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                     {
-                    @Html.AntiForgeryToken()
-                    <div class="form-group">
-                        @Html.Hidden("TicketId", Model.Id)
-                    </div>
-                    <div class="form-group">
-                        @Html.Hidden("UserId", User.Identity.GetUserId())
-                    </div>
-                    <div class="form-group">
-                        @Html.TextArea("Comment", new { @class = "form-control", rows = "3" })
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Submit" class="btn btn-default" />
-                    </div>
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.Hidden("TicketId", Model.Id)
+                        </div>
+                            <div class="form-group">
+                                @Html.Hidden("UserId", User.Identity.GetUserId())
+                            </div>
+                            <div class="form-group">
+                                @Html.TextArea("Comment", new { @class = "form-control", rows = "3" })
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Submit" class="btn btn-default" />
+                            </div>
                     }
-            </div>
+                </div>
             }
         </div>
     </div>
@@ -198,17 +202,23 @@
         <div class="mrgn-2">
             @foreach (var com in Model.TicketComments)
             {
-            <p>Created on : @com.Created.DateTime.ToLongDateString()</p>
-            <p>By : @com.User.DisplayName</p>
-            <p>@com.Comment</p>
-            <p>
-                @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
+                <p> Created on: @com.Created.DateTime.ToLongDateString() </p>
+
+
+                <p> By : @com.User.DisplayName </p>
+
+
+                <p> @com.Comment </p>
+
+
+                <p>
+                    @if (User.Identity.GetUserId() == com.UserId || User.IsInRole("Admin"))
                     {
-                    @Html.ActionLink("Edit Comment", "Edit", "TicketComments", new { id = com.Id }, null)<span> | </span>
-                    @Html.ActionLink("Delete Comment", "Delete", "TicketComments", new { id = com.Id }, null)
+                        @Html.ActionLink("Edit Comment", "Edit", "TicketComments", new { id = com.Id }, null) <span> | </span>
+                        @Html.ActionLink("Delete Comment", "Delete", "TicketComments", new { id = com.Id }, null)
                     }
-            </p>
-            <br />
+                </p>
+                    <br />
             }
         </div>
     </div>
@@ -221,27 +231,27 @@
         <div>
             @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager") || Model.OwnerUserId == User.Identity.GetUserId() || Model.AssignedToUserId == User.Identity.GetUserId())
             {
-            <div>
-                <h4>Add Attachment</h4>
-                @using (Html.BeginForm("AddAttachment", "Tickets", FormMethod.Post,
-             new { @class = "form-horizontal", role = "form", enctype = "Multipart/form-data" }))
+                <div>
+                    <h4>Add Attachment</h4>
+                    @using (Html.BeginForm("AddAttachment", "Tickets", FormMethod.Post,
+new { @class = "form-horizontal", role = "form", enctype = "Multipart/form-data" }))
                     {
-                    @Html.AntiForgeryToken()
-                    <div class="form-group">
-                        @Html.Hidden("TicketId", Model.Id)
-                    </div>
-                    <div class="form-group">
-                        @Html.Hidden("UserId", User.Identity.GetUserId())
-                        <div>
-                            <div class="col-md-10">
-                                <input name="image" type="file" class="form-control" id="fileUpload" />
-                                <br />
-                                <input type="submit" value="Submit" class="btn btn-default" />
-                            </div>
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.Hidden("TicketId", Model.Id)
                         </div>
-                    </div>
+                            <div class="form-group">
+                                @Html.Hidden("UserId", User.Identity.GetUserId())
+                                <div>
+                                    <div class="col-md-10">
+                                        <input name="image" type="file" class="form-control" id="fileUpload" />
+                                        <br />
+                                        <input type="submit" value="Submit" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
                     }
-            </div>
+                </div>
             }
         </div>
     </div>
@@ -252,48 +262,48 @@
         </div>
         <div class="mrgn-2">
             @foreach (var att in Model.TicketAttachments)
-                {
-                <span>@*Posted by @att.User.FirstName on*@ @att.Created.Date.ToLongDateString()</span>
-                            <!-- Trigger the Modal -->
+            {
+                <span>@*Posted by @att.User.FirstName on*@ @att.Created.Date.ToLongDateString() </span>
+    <!-- Trigger the Modal -->
                 <img style="max-width:50%" id="@index" class="img-responsive modalImg" src="@att.FileUrl" />
-                        <!-- The Modal -->
-                <div id="myModal" class="modal">
-                    <!-- The Close Button -->
-                    <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
-                    <!-- Modal Content (The Image) -->
-                    <img class="modal-content" id="img">
-                    <!-- Modal Caption (Image Text) -->
-                    <div id="caption"></div>
-                </div>
-                <script>
-                                        // For Image Modal
-                                        // Get the modal
-                                        var modal = document.getElementById('myModal');
-                                        // Get the image and insert it inside the modal - use its "alt" text as a caption
-                                        var img = document.getElementById("@index");
-                                        var modalImg = document.getElementById("img");
-                                        var captionText = document.getElementById("caption");
-                                        img.onclick = function () {
-                                            modal.style.display = "block";
-                                            modalImg.src = this.src;
-                                            captionText.innerHTML = this.alt;
-                                        }
-                                        var span = document.getElementsByClassName("close")[0];
-                                        // When the user clicks on <span> (x), close the modal
-                                        span.onclick = function () {
-                                            modal.style.display = "none";
-                                        }
-                </script>
-                    index++;
+    <!-- The Modal -->
+                    <div id="myModal" class="modal">
+                        <!-- The Close Button -->
+                        <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                        <!-- Modal Content (The Image) -->
+                        <img class="modal-content" id="img">
+                        <!-- Modal Caption (Image Text) -->
+                        <div id="caption"></div>
+                    </div>
+                    <script>
+                        // For Image Modal
+                        // Get the modal
+                        var modal = document.getElementById('myModal');
+                        // Get the image and insert it inside the modal - use its "alt" text as a caption
+                        var img = document.getElementById("@index");
+                        var modalImg = document.getElementById("img");
+                        var captionText = document.getElementById("caption");
+                        img.onclick = function () {
+                            modal.style.display = "block";
+                            modalImg.src = this.src;
+                            captionText.innerHTML = this.alt;
+                        }
+                        var span = document.getElementsByClassName("close")[0];
+                        // When the user clicks on <span> (x), close the modal
+                        span.onclick = function () {
+                            modal.style.display = "none";
+                        }
+                    </script>
+                index++;
 
                 <p>
                     @if (User.Identity.GetUserId() == att.UserId || User.IsInRole("Admin"))
-                        {
+                    {
                         @Html.ActionLink("Edit Attachment", "Edit", "TicketAttachments", new { id = att.Id }, null)<span> | </span>
                         @Html.ActionLink("Delete Attachment", "Delete", "TicketAttachments", new { id = att.Id }, null)
-                        }
+                    }
                 </p>
-                }
+            }
         </div>
     </div>
 </div>

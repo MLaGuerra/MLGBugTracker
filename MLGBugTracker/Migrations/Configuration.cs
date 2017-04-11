@@ -115,8 +115,68 @@ namespace MLGBugTracker.Migrations
             userId = userManager.FindByEmail("submitter@coderfoundry.com").Id;
             userManager.AddToRole(userId, "Submitter");
 
+            // Guest Login
+            if (!context.Users.Any(u => u.Email == "admin@demo.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "admin@demo.com",
+                    Email = "admin@demo.com",
+                    FirstName = "Admin",
+                    LastName = "Demo",
+                    DisplayName = "AdminDemo"
+                }, "Abc&123!");
+            }
 
+            if (!context.Users.Any(u => u.Email == "projectmanager@demo.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "projectmanager@demo.com",
+                    Email = "projectmanager@demo.com",
+                    FirstName = "Project",
+                    LastName = "Manager",
+                    DisplayName = "ProjectManagerDemo"
+                }, "Abc&123!");
+            }
 
+            if (!context.Users.Any(u => u.Email == "developer@demo.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "developer@demo.com",
+                    Email = "developer@demo.com",
+                    FirstName = "Developer",
+                    LastName = "Demo",
+                    DisplayName = "DeveloperDemo"
+                }, "Abc&123!");
+            }
+
+            if (!context.Users.Any(u => u.Email == "submitter@demo.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "submitter@demo.com",
+                    Email = "submitter@demo.com",
+                    FirstName = "Submitter",
+                    LastName = "Demo",
+                    DisplayName = "SubmitterDemo"
+                }, "Abc&123!");
+            }
+
+            userId = userManager.FindByEmail("admin@demo.com").Id;
+            userManager.AddToRole(userId, "Admin");
+
+            userId = userManager.FindByEmail("projectmanager@demo.com").Id;
+            userManager.AddToRole(userId, "ProjectManager");
+
+            userId = userManager.FindByEmail("developer@demo.com").Id;
+            userManager.AddToRole(userId, "Developer");
+
+            userId = userManager.FindByEmail("submitter@demo.com").Id;
+            userManager.AddToRole(userId, "Submitter");
+
+            // Ticket Priority
             if (!context.TicketPriorities.Any(u => u.Name == "High"))
             { context.TicketPriorities.Add(new TicketPriority { Name = "High" }); }
 
@@ -129,6 +189,7 @@ namespace MLGBugTracker.Migrations
             if (!context.TicketPriorities.Any(u => u.Name == "Urgent"))
             { context.TicketPriorities.Add(new TicketPriority { Name = "Urgent" }); }
 
+            // Ticket Type
             if (!context.TicketTypes.Any(u => u.Name == "Production Fix"))
             { context.TicketTypes.Add(new TicketType { Name = "Production Fix" }); }
 
@@ -138,6 +199,7 @@ namespace MLGBugTracker.Migrations
             if (!context.TicketTypes.Any(u => u.Name == "Software Update"))
             { context.TicketTypes.Add(new TicketType { Name = "Software Update" }); }
 
+            // Ticket Status
             if (!context.TicketStatuses.Any(u => u.Name == "New"))
             { context.TicketStatuses.Add(new TicketStatus { Name = "New" }); }
 
