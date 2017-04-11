@@ -92,6 +92,57 @@ namespace MLGBugTracker.Controllers
         }
 
         //
+        // Post: /Account/GuestLogin
+        [AllowAnonymous]
+        public async Task<ActionResult> GuestLogin(string returnUrl, string type)
+        {
+
+            string Email = "";
+            string Password = "";
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+
+            switch (type)
+            {
+                case "Admin":
+                    Email = "admin@demo.com";
+                    Password = "Abc&123!";
+                    break;
+                case "ProjectManager":
+                    Email = "manager@demo.com";
+                    Password = "Abc&123!";
+                    break;
+                case "Developer":
+                    Email = "developer@demo.com";
+                    Password = "Abc&123!";
+                    break;
+                case "Submitter":
+                    Email = "submitter@demo.com";
+                    Password = "Abc&123!";
+                    break;
+                default:
+                    Email = "sumitter@demo.com";
+                    Password = "Abc&123!";
+                    break;
+            }
+            var result = await SignInManager.PasswordSignInAsync(Email, Password, false, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Tickets");
+                //return RedirectToLocal(returnUrl);
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.RequiresVerification:
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return RedirectToAction("Login");
+            }
+        }
+
+        //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
