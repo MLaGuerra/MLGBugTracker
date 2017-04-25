@@ -241,6 +241,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-# Personal Files
-**/Private.config
-**/dbConnection.config
+Private.config
+dbConnection.config
