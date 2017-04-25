@@ -61,7 +61,7 @@ namespace MLGBugTracker
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             {
                 ClientId = "975497889136-03praeei1hjph40la97906catbk56gr4.apps.googleusercontent.com",
-                ClientSecret = "chiyA0RUbvn895Zur7HcvtMKE"
+                ClientSecret = "chiyA0RUbvn895Zur7HcvtMK"
             });
         }
     }
